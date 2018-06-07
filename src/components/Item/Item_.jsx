@@ -10,16 +10,14 @@ class Item extends Component {
   constructor() {
     super();
     this.state = {
-     isClick: false,
-     topic: []
+      topic: []
     }
-    // This binding is necessary to make this work in the callback
-    this.test = this.test.bind(this);
   }
 
   render() {
     let attributes = this._getAttributes();
     let viewpoints = this._getViewpoints();
+    let attributesName = this._getAttributesName();
     return (
       <div className="App">
         <h1>{this.state.name}</h1>
@@ -29,12 +27,16 @@ class Item extends Component {
             <div className="DescriptionModality">
               <h3>Attributs du document</h3>
               <div className="Attributes">
-              <button value="modifier" onClick={this.test}>Modifier</button>
                 {attributes}
 
-
+                  Attribute à modifier:
+                  <form action="http://somesite.com/action" method="post">
+                  <select>
+                    {attributesName}
+                  </select>
+                  <button type="submit">change</button>
+                  </form>
               </div>
-
             </div>
             {viewpoints}
           </div>
@@ -48,6 +50,7 @@ class Item extends Component {
     );
   }
 
+
   _getAttributes() {
     return Object.entries(this.state)
       .filter( x => !["topic", "resource","thumbnail"].includes(x[0]) )
@@ -55,11 +58,16 @@ class Item extends Component {
         <div className="Attribute" key={x[0]}>
           <div className="Key">{x[0]}</div>
           <div className="Value">{x[1][0]}</div>
-          {this.state.isClick ? this.getForm() : ""}
         </div>
       );
   }
-
+  _getAttributesName(){
+    return Object.entries(this.state)
+      .filter( x => !["topic", "resource","thumbnail"].includes(x[0]) )
+      .map( x =>
+        <option value={x[0]} key={x[0]}>{x[0]}</option>
+      );
+  }
   _getViewpoints() {
     return Object.entries(this.state.topic).map(v =>
       <Viewpoint key={v[0]} id={v[0]} topics={v[1]} />
@@ -78,18 +86,6 @@ class Item extends Component {
     clearInterval(this._timer);
   }
 
-  setAttribute(){
-     console.log('ici');
-        let hypertopic = new Hypertopic(conf.services);
-       const _log = (x) => console.log(JSON.stringify(x, null, 2));
-        const _error = (x) => console.error(x.message);
-        hypertopic.get({_id:this.props.match.params.item})
-           .then(x => Object.assign(x, {item_taille:'blabla'}))
-           .then(hypertopic.post)
-           .then(_log)
-           .catch(_error);
-           }
-
   _fetchItem() {
     let uri = this.props.match.url;
     let params = this.props.match.params;
@@ -100,31 +96,8 @@ class Item extends Component {
       this.setState(item);
     });
   }
-
-  getForm(){
-     return(
-       <button id="change" value="change" onClick={this.changeAttribut}>change</button>
-
-
-       );
-      }
-
-  test(){
-       this.setState(prevState => ({
-          isClick: !prevState.isClick
-      }))
-    }
-
-  changeAttribut(){
-    document.getElementById("delete").parentElement.remove();
-    //request database
-  }
-  updateAttribut(){
-
-  }
-
-
 }
+
 class Viewpoint extends Component {
   constructor(props) {
     super();
