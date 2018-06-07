@@ -4,29 +4,20 @@ import by from 'sort-by';
 import queryString from 'query-string';
 
 class Topic extends Component {
-  constructor(props) {
-    super();
-    this.handleCollapse = this.handleCollapse.bind(this);
-    let hasSubtopics =  (props.topics[props.id].narrower||[]).length;
-    this.state = {
-      fold: hasSubtopics? 'Closed' : ''
-    };
-  }
-
   render() {
     let subtopics = this._getSubtopics();
     let isSelected = this.props.selection.includes(this.props.id)? 'Selected' : '';
-    let topic = 'Topic ' + this.state.fold;
     let items = this.props.topicsItems.get(this.props.id);
     let count = (items)? `(${items.size})` : '';
     let uri = '?' + queryString.stringify({
       t: toggle(this.props.selection, this.props.id)
     });
     return (
-      <li className={topic}>
-        <a className="Bullet" onClick={this.handleCollapse} />
-        <Link to={uri} className={isSelected}> {this.props.name} </Link>
-        <span> {count}</span>
+      <li className="Topic">
+        <div className={isSelected}>
+          <Link to={uri}> {this.props.name} </Link>
+          <span> {count}</span>
+        </div>
         <ul>
         {subtopics}
         </ul>
@@ -41,11 +32,6 @@ class Topic extends Component {
         selection={this.props.selection} topicsItems={this.props.topicsItems} />
     );
   }
-
-  handleCollapse(e) {
-    e.preventDefault();
-    this.setState({fold: fold(this.state.fold)});
-  }
 }
 
 function toggle(array, item) {
@@ -54,14 +40,6 @@ function toggle(array, item) {
     s.add(item);
   }
   return [...s];
-}
-
-function fold(x) {
-  switch (x) {
-    case 'Closed': return 'Opened';
-    case 'Opened': return 'Closed';
-    default: return '';
-  }
 }
 
 export default Topic;

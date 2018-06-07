@@ -10,11 +10,8 @@ class Item extends Component {
   constructor() {
     super();
     this.state = {
-     isClick: false,
-     topic: []
+      topic: []
     }
-    // This binding is necessary to make this work in the callback
-    this.test = this.test.bind(this);
   }
 
   render() {
@@ -29,12 +26,8 @@ class Item extends Component {
             <div className="DescriptionModality">
               <h3>Attributs du document</h3>
               <div className="Attributes">
-              <button value="modifier" onClick={this.test}>Modifier</button>
                 {attributes}
-
-
               </div>
-
             </div>
             {viewpoints}
           </div>
@@ -55,7 +48,6 @@ class Item extends Component {
         <div className="Attribute" key={x[0]}>
           <div className="Key">{x[0]}</div>
           <div className="Value">{x[1][0]}</div>
-          {this.state.isClick ? this.getForm() : ""}
         </div>
       );
   }
@@ -78,18 +70,6 @@ class Item extends Component {
     clearInterval(this._timer);
   }
 
-  setAttribute(){
-     console.log('ici');
-        let hypertopic = new Hypertopic(conf.services);
-       const _log = (x) => console.log(JSON.stringify(x, null, 2));
-        const _error = (x) => console.error(x.message);
-        hypertopic.get({_id:this.props.match.params.item})
-           .then(x => Object.assign(x, {item_taille:'blabla'}))
-           .then(hypertopic.post)
-           .then(_log)
-           .catch(_error);
-           }
-
   _fetchItem() {
     let uri = this.props.match.url;
     let params = this.props.match.params;
@@ -100,31 +80,8 @@ class Item extends Component {
       this.setState(item);
     });
   }
-
-  getForm(){
-     return(
-       <button id="change" value="change" onClick={this.changeAttribut}>change</button>
-
-
-       );
-      }
-
-  test(){
-       this.setState(prevState => ({
-          isClick: !prevState.isClick
-      }))
-    }
-
-  changeAttribut(){
-    document.getElementById("delete").parentElement.remove();
-    //request database
-  }
-  updateAttribut(){
-
-  }
-
-
 }
+
 class Viewpoint extends Component {
   constructor(props) {
     super();
